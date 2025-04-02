@@ -26,6 +26,7 @@ function App() {
   const startTutorial = () => {
     setShowGreeting(false);
     setShowTutorial(true);
+    handleTaskComplete(1); // Mark the first step as complete
   };
 
   const declineTutorial = () => {
@@ -57,6 +58,7 @@ function App() {
   const handleTaskComplete = (progress) => {
     setTutorialProgress(progress);
     localStorage.setItem('tutorialProgress', progress);
+
     if (progress === 3) {
       toast.success('Tutorial completed! You can now explore the site.');
       closeTutorial();
@@ -102,8 +104,10 @@ function App() {
         'go to voice commands': () => {
           if (tutorialProgress === 1) {
             toast.info('Navigating to Voice Commands page...');
-            window.location.href = '/voice-commands';
-            handleTaskComplete(2);
+            handleTaskComplete(2); // Update progress before navigating
+            setTimeout(() => {
+              window.location.href = '/voice-commands';
+            }, 500);
           } else {
             toast.error('This action is not part of the current tutorial step.');
           }
@@ -160,12 +164,15 @@ function App() {
     }
   }, [tutorialProgress, voiceCommandsEnabled]);
 
+  console.log('tutorialProgress:', tutorialProgress);
+
   return (
     <Router>
       <div className="App">
         <Navbar
           toggleVoiceCommands={toggleVoiceCommands}
           voiceCommandsEnabled={voiceCommandsEnabled}
+          tutorialProgress={tutorialProgress}
         />
 
         <ToastContainer position="top-right" autoClose={5000} />

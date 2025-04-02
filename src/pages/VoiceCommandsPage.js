@@ -2,27 +2,55 @@ import React from 'react';
 
 function VoiceCommandsPage() {
   const commands = [
-    { command: 'Go to Roses', description: 'Navigate to the Roses page.' },
-    { command: 'Go to Tulips', description: 'Navigate to the Tulips page.' },
-    { command: 'Go to Orchids', description: 'Navigate to the Orchids page.' },
-    { command: 'Go Home', description: 'Navigate to the homepage.' },
-    { command: 'Scroll Down', description: 'Scroll down the page.' },
-    { command: 'Scroll Up', description: 'Scroll up the page.' },
-    { command: 'Show More Information', description: 'Display additional information on flower pages.' },
-    { command: 'Close Tutorial', description: 'Close the tutorial modal.' },
-    { command: 'Restart Tutorial', description: 'Restart the tutorial modal.' },
+    { command: 'go to roses', description: 'Navigate to the Roses page.' },
+    { command: 'scroll down', description: 'Scroll down the page.' },
+    { command: 'go home', description: 'Navigate back to the Home page.' },
+    { command: 'close tutorial', description: 'Close the tutorial modal.' },
+    { command: 'restart tutorial', description: 'Restart the tutorial from the beginning.' },
+    { command: 'scroll up', description: 'Scroll up the page.' },
+    { command: 'show more information', description: 'Display additional information about flowers.' },
   ];
 
   return (
     <div className="voice-commands-page">
-      <h1 className="text-4xl font-bold">Available Voice Commands</h1>
-      <ul className="mt-4">
-        {commands.map((cmd, index) => (
-          <li key={index} className="mb-2">
-            <strong>{cmd.command}:</strong> {cmd.description}
-          </li>
-        ))}
-      </ul>
+      <header
+        className="voice-commands-header"
+        style={{
+          background: 'linear-gradient(135deg, #6a11cb, #2575fc)',
+          color: 'white',
+          padding: '2rem',
+          textAlign: 'center',
+        }}
+      >
+        <h1 className="text-4xl font-bold">Voice Commands</h1>
+        <p className="text-lg mt-2">Learn how to use voice commands to navigate the site.</p>
+      </header>
+
+      <main className="voice-commands-main" style={{ padding: '2rem' }}>
+        <ul className="commands-list" style={{ listStyle: 'none', padding: 0 }}>
+          {commands.map((cmd, index) => (
+            <li
+              key={index}
+              className="command-item"
+              style={{
+                marginBottom: '1rem',
+                padding: '1rem',
+                border: '1px solid #ddd',
+                borderRadius: '8px',
+                boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+                background: 'white',
+              }}
+            >
+              <p className="command-text" style={{ fontWeight: 'bold', fontSize: '1.2rem' }}>
+                {cmd.command}
+              </p>
+              <p className="command-description" style={{ color: '#666', marginTop: '0.5rem' }}>
+                {cmd.description}
+              </p>
+            </li>
+          ))}
+        </ul>
+      </main>
     </div>
   );
 }

@@ -1,6 +1,8 @@
 import { Link } from 'react-router-dom';
 
-function Navbar({ toggleVoiceCommands, voiceCommandsEnabled }) {
+function Navbar({ toggleVoiceCommands, voiceCommandsEnabled, tutorialProgress }) {
+  const progressPercentage = tutorialProgress === 3 ? 100 : (tutorialProgress / 3) * 100;
+
   return (
     <nav
       className="navbar"
@@ -14,24 +16,59 @@ function Navbar({ toggleVoiceCommands, voiceCommandsEnabled }) {
         color: 'white',
       }}
     >
-      <h1
-        style={{
-          margin: 0,
-          fontSize: '1.8rem',
-          fontWeight: 'bold',
-          textShadow: '1px 1px 2px rgba(0, 0, 0, 0.5)',
-        }}
-      >
-        Teodora's Florist
-      </h1>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+        <h1
+          style={{
+            margin: 0,
+            fontSize: '1.8rem',
+            fontWeight: 'bold',
+            textShadow: '1px 1px 2px rgba(0, 0, 0, 0.5)',
+          }}
+        >
+          Teodora's Florist
+        </h1>
+        <button
+          className="tutorial-progress-btn"
+          style={{
+            padding: '0.5rem 1rem',
+            background: `linear-gradient(90deg, #28a745 ${progressPercentage}%, #e0e0e0 ${progressPercentage}%)`,
+            color: 'white',
+            border: 'none',
+            borderRadius: '8px',
+            cursor: 'pointer',
+            fontSize: '1rem',
+            fontWeight: 'bold',
+            boxShadow: '0 2px 4px rgba(0, 0, 0, 0.2)',
+            transition: 'background 0.3s ease, transform 0.2s ease',
+          }}
+          onMouseEnter={(e) => {
+            e.target.style.transform = 'scale(1.05)';
+          }}
+          onMouseLeave={(e) => {
+            e.target.style.transform = 'scale(1)';
+          }}
+        >
+          Tutorial Progress
+        </button>
+      </div>
       <div style={{ display: 'flex', gap: '1rem' }}>
         <Link
           to="/voice-commands"
           style={{
-            textDecoration: 'none',
+            padding: '0.5rem 1rem',
+            background: 'linear-gradient(135deg, #6a11cb, #2575fc)',
             color: 'white',
+            borderRadius: '8px',
+            textDecoration: 'none',
             fontWeight: 'bold',
-            fontSize: '1rem',
+            boxShadow: '0 2px 4px rgba(0, 0, 0, 0.2)',
+            transition: 'background 0.3s ease, transform 0.2s ease',
+          }}
+          onMouseEnter={(e) => {
+            e.target.style.transform = 'scale(1.05)';
+          }}
+          onMouseLeave={(e) => {
+            e.target.style.transform = 'scale(1)';
           }}
         >
           Voice Commands
