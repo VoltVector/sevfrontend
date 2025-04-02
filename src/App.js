@@ -59,7 +59,7 @@ function App() {
     setTutorialProgress(progress);
     localStorage.setItem('tutorialProgress', progress);
 
-    if (progress === 3) {
+    if (progress === 3) { // Tutorial is completed
       toast.success('Tutorial completed! You can now explore the site.');
       closeTutorial();
     }
@@ -101,13 +101,26 @@ function App() {
   useEffect(() => {
     if (annyang && voiceCommandsEnabled) {
       const voiceCommands = {
-        'go to voice commands': () => {
+        'show welcome message': () => {
           if (tutorialProgress === 1) {
-            toast.info('Navigating to Voice Commands page...');
-            handleTaskComplete(2); // Update progress before navigating
+            const welcomeMessage = document.createElement('div');
+            welcomeMessage.textContent = 'Welcome to Teodora\'s Florist!';
+            welcomeMessage.style.position = 'fixed';
+            welcomeMessage.style.top = '20px';
+            welcomeMessage.style.left = '50%';
+            welcomeMessage.style.transform = 'translateX(-50%)';
+            welcomeMessage.style.background = '#4caf50';
+            welcomeMessage.style.color = 'white';
+            welcomeMessage.style.padding = '1rem';
+            welcomeMessage.style.borderRadius = '8px';
+            welcomeMessage.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.2)';
+            document.body.appendChild(welcomeMessage);
+
             setTimeout(() => {
-              window.location.href = '/voice-commands';
-            }, 500);
+              document.body.removeChild(welcomeMessage);
+            }, 3000);
+
+            handleTaskComplete(2);
           } else {
             toast.error('This action is not part of the current tutorial step.');
           }
@@ -120,17 +133,30 @@ function App() {
             toast.error('This action is not part of the current tutorial step.');
           }
         },
+        'go to voice commands': () => {
+          toast.info('Navigating to Voice Commands...');
+          window.location.href = '/voice-commands';
+        },
+        'go to home': () => {
+          toast.info('Navigating to Home...');
+          window.location.href = '/';
+        },
         'go to roses': () => {
           toast.info('Navigating to Roses...');
           window.location.href = '/roses';
         },
+        'go to tulips': () => {
+          toast.info('Navigating to Tulips...');
+          window.location.href = '/tulips';
+        },
+        'go to orchids': () => {
+          toast.info('Navigating to Orchids...');
+          window.location.href = '/orchids';
+        },
+
         'scroll down': () => {
           toast.info('Scrolling down...');
           window.scrollBy({ top: 500, behavior: 'smooth' });
-        },
-        'go home': () => {
-          toast.info('Navigating to Home...');
-          window.location.href = '/';
         },
         'close tutorial': () => {
           toast.info('Closing tutorial...');
@@ -193,6 +219,7 @@ function App() {
             <TutorialModal
               onClose={closeTutorial}
               onTaskComplete={handleTaskComplete}
+              tutorialProgress={tutorialProgress} // Pass tutorialProgress as a prop
             />
           )}
         </AnimatePresence>
