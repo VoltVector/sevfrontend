@@ -17,6 +17,11 @@ function RosesPage() {
           className="flower-image"
         />
         <p className="text-lg mt-4">{roseData.price}</p>
+        <div className="flower-more-info" style={{ display: 'none' }}>
+          <p className="text-lg mt-4">
+            Roses are a symbol of love and beauty. They are perfect for weddings, anniversaries, or just to brighten someone's day.
+          </p>
+        </div>
       </main>
     </div>
   );
