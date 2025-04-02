@@ -1,21 +1,22 @@
 import React from 'react';
+import { flowers } from '../data/flowers';
 
 function TulipsPage() {
+  const tulipData = flowers.find((flower) => flower.name === "Tulips");
+
   return (
     <div className="flower-page">
       <header className="flower-header">
-        <h1 className="text-4xl font-bold">Tulips</h1>
-        <p className="text-lg mt-4">Bright and colorful tulips to brighten your day.</p>
+        <h1 className="text-4xl font-bold">{tulipData.name}</h1>
+        <p className="text-lg mt-4">{tulipData.description}</p>
       </header>
       <main className="flower-main">
         <img
-          src="/images/tulips.jpg"
-          alt="Tulips"
+          src={tulipData.image}
+          alt={tulipData.name}
           className="flower-image"
         />
-        <p className="text-lg mt-4">
-          Tulips are known for their vibrant colors and elegant shapes. They are perfect for spring celebrations.
-        </p>
+        <p className="text-lg mt-4">{tulipData.price}</p>
       </main>
     </div>
   );

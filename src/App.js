@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import './AppTailwind.css';
 import Navbar from './components/Navbar';
@@ -9,11 +9,57 @@ import RosesPage from './pages/RosesPage';
 import TulipsPage from './pages/TulipsPage';
 import OrchidsPage from './pages/OrchidsPage';
 import { AnimatePresence } from 'framer-motion';
+import annyang from 'annyang';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 function App() {
   const [showTutorial, setShowTutorial] = useState(true);
 
   const closeTutorial = () => setShowTutorial(false);
+
+  useEffect(() => {
+    if (annyang) {
+      // Define voice commands
+      const voiceCommands = {
+        'go to roses': () => {
+          toast.info('Navigating to Roses...');
+          window.location.href = '/roses';
+        },
+        'go to tulips': () => {
+          toast.info('Navigating to Tulips...');
+          window.location.href = '/tulips';
+        },
+        'go to orchids': () => {
+          toast.info('Navigating to Orchids...');
+          window.location.href = '/orchids';
+        },
+        'close tutorial': () => {
+          toast.info('Closing tutorial...');
+          setShowTutorial(false);
+        },
+        'scroll down': () => {
+          toast.info('Scrolling down...');
+          window.scrollBy({ top: 500, behavior: 'smooth' });
+        },
+        'scroll up': () => {
+          toast.info('Scrolling up...');
+          window.scrollBy({ top: -500, behavior: 'smooth' });
+        },
+      };
+
+      // Add commands to annyang
+      annyang.addCommands(voiceCommands);
+
+      // Start listening
+      annyang.start();
+
+      return () => {
+        // Stop listening when the component unmounts
+        annyang.abort();
+      };
+    }
+  }, []);
 
   return (
     <Router>
@@ -46,4 +92,4 @@ function App() {
   );
 }
 
-export default App; 
+export default App;
