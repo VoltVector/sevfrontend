@@ -5,9 +5,8 @@ function TutorialModal({ onClose, onTaskComplete }) {
   const [currentTask, setCurrentTask] = useState(0);
 
   const tasks = [
-    'Say "Go to Roses"',
-    'Say "Scroll Down"',
-    'Say "Go Home"',
+    'Say "Go to Voice Commands"',
+    'Say "Finish Tutorial"',
   ];
 
   const handleTaskComplete = () => {
@@ -21,10 +20,21 @@ function TutorialModal({ onClose, onTaskComplete }) {
 
   useEffect(() => {
     if (annyang) {
-      // Define voice command for completing tasks
+      // Define voice commands for the tutorial tasks
       const tutorialCommands = {
-        'complete task': () => {
-          handleTaskComplete();
+        'go to voice commands': () => {
+          if (currentTask === 0) {
+            handleTaskComplete();
+          } else {
+            console.error('This action is not part of the current tutorial step.');
+          }
+        },
+        'finish tutorial': () => {
+          if (currentTask === 1) {
+            handleTaskComplete();
+          } else {
+            console.error('This action is not part of the current tutorial step.');
+          }
         },
       };
 
@@ -36,7 +46,7 @@ function TutorialModal({ onClose, onTaskComplete }) {
 
       return () => {
         // Remove commands and stop listening when the component unmounts
-        annyang.removeCommands(['complete task']);
+        annyang.removeCommands(['go to voice commands', 'finish tutorial']);
         annyang.abort();
       };
     }

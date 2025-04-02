@@ -11,50 +11,122 @@ import OrchidsPage from './pages/OrchidsPage';
 import VoiceCommandsPage from './pages/VoiceCommandsPage';
 import { AnimatePresence } from 'framer-motion';
 import annyang from 'annyang';
-import { toast } from 'react-toastify';
+import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 function App() {
-  const [showTutorial, setShowTutorial] = useState(() => {
-    // Check if the tutorial has already been completed
-    return !localStorage.getItem('tutorialCompleted');
+  const [showGreeting, setShowGreeting] = useState(true);
+  const [showTutorial, setShowTutorial] = useState(false);
+  const [tutorialProgress, setTutorialProgress] = useState(() => {
+    const savedProgress = localStorage.getItem('tutorialProgress');
+    return savedProgress ? parseInt(savedProgress, 10) : 0;
   });
-  const [tutorialProgress, setTutorialProgress] = useState(0);
+  const [voiceCommandsEnabled, setVoiceCommandsEnabled] = useState(true);
+
+  const startTutorial = () => {
+    setShowGreeting(false);
+    setShowTutorial(true);
+  };
+
+  const declineTutorial = () => {
+    setShowGreeting(false);
+    toast.info('Voice Command Tutorial skipped.');
+    askToKeepVoiceCommands();
+  };
+
+  const askToKeepVoiceCommands = () => {
+    const keepVoiceCommands = window.confirm(
+      'Do you want to keep Voice Commands enabled?'
+    );
+    setVoiceCommandsEnabled(keepVoiceCommands);
+    toast.info(
+      keepVoiceCommands
+        ? 'Voice Commands will remain enabled.'
+        : 'Voice Commands have been disabled.'
+    );
+    if (!keepVoiceCommands && annyang) {
+      annyang.abort();
+    }
+  };
 
   const closeTutorial = () => {
     setShowTutorial(false);
-    localStorage.setItem('tutorialCompleted', 'true'); // Mark tutorial as completed
+    localStorage.setItem('tutorialCompleted', 'true');
   };
 
   const handleTaskComplete = (progress) => {
     setTutorialProgress(progress);
+    localStorage.setItem('tutorialProgress', progress);
     if (progress === 3) {
       toast.success('Tutorial completed! You can now explore the site.');
       closeTutorial();
     }
   };
 
-  useEffect(() => {
+  const toggleVoiceCommands = () => {
+    setVoiceCommandsEnabled((prev) => !prev);
     if (annyang) {
-      // Define voice commands
+      if (voiceCommandsEnabled) {
+        annyang.abort();
+        toast.info('Voice commands disabled.');
+      } else {
+        annyang.start();
+        toast.info('Voice commands enabled.');
+      }
+    }
+  };
+
+  useEffect(() => {
+    if (annyang && showGreeting) {
+      const greetingCommands = {
+        'yes': () => {
+          startTutorial();
+        },
+        'no': () => {
+          declineTutorial();
+        },
+      };
+
+      annyang.addCommands(greetingCommands);
+      annyang.start();
+
+      return () => {
+        annyang.removeCommands(['yes', 'no']);
+      };
+    }
+  }, [showGreeting]);
+
+  useEffect(() => {
+    if (annyang && voiceCommandsEnabled) {
       const voiceCommands = {
+        'go to voice commands': () => {
+          if (tutorialProgress === 1) {
+            toast.info('Navigating to Voice Commands page...');
+            window.location.href = '/voice-commands';
+            handleTaskComplete(2);
+          } else {
+            toast.error('This action is not part of the current tutorial step.');
+          }
+        },
+        'finish tutorial': () => {
+          if (tutorialProgress === 2) {
+            toast.success('Tutorial completed! You can now explore the site.');
+            handleTaskComplete(3);
+          } else {
+            toast.error('This action is not part of the current tutorial step.');
+          }
+        },
         'go to roses': () => {
           toast.info('Navigating to Roses...');
           window.location.href = '/roses';
-          if (tutorialProgress === 0) handleTaskComplete(1);
         },
-        'go to tulips': () => {
-          toast.info('Navigating to Tulips...');
-          window.location.href = '/tulips';
-        },
-        'go to orchids': () => {
-          toast.info('Navigating to Orchids...');
-          window.location.href = '/orchids';
+        'scroll down': () => {
+          toast.info('Scrolling down...');
+          window.scrollBy({ top: 500, behavior: 'smooth' });
         },
         'go home': () => {
           toast.info('Navigating to Home...');
           window.location.href = '/';
-          if (tutorialProgress === 2) handleTaskComplete(3);
         },
         'close tutorial': () => {
           toast.info('Closing tutorial...');
@@ -64,11 +136,7 @@ function App() {
           toast.info('Restarting tutorial...');
           setShowTutorial(true);
           setTutorialProgress(0);
-        },
-        'scroll down': () => {
-          toast.info('Scrolling down...');
-          window.scrollBy({ top: 500, behavior: 'smooth' });
-          if (tutorialProgress === 1) handleTaskComplete(2);
+          localStorage.setItem('tutorialProgress', 0);
         },
         'scroll up': () => {
           toast.info('Scrolling up...');
@@ -76,7 +144,6 @@ function App() {
         },
         'show more information': () => {
           toast.info('Displaying more information...');
-          // Add logic to display additional information on flower pages
           const infoElement = document.querySelector('.flower-more-info');
           if (infoElement) {
             infoElement.style.display = 'block';
@@ -84,48 +151,42 @@ function App() {
         },
       };
 
-      // Add commands to annyang
       annyang.addCommands(voiceCommands);
-
-      // Start listening
       annyang.start();
 
       return () => {
-        // Stop listening when the component unmounts
         annyang.abort();
       };
     }
-  }, [tutorialProgress]);
+  }, [tutorialProgress, voiceCommandsEnabled]);
 
   return (
     <Router>
       <div className="App">
-        <Navbar />
+        <Navbar
+          toggleVoiceCommands={toggleVoiceCommands}
+          voiceCommandsEnabled={voiceCommandsEnabled}
+        />
+
+        <ToastContainer position="top-right" autoClose={5000} />
 
         <AnimatePresence>
+          {showGreeting && (
+            <div className="greeting-modal">
+              <h2>Welcome to Teodora's Florist!</h2>
+              <p>Do you wish to take the Voice Command Tutorial?</p>
+              <div className="greeting-buttons">
+                <button onClick={startTutorial}>Yes</button>
+                <button onClick={declineTutorial}>No</button>
+              </div>
+            </div>
+          )}
+
           {showTutorial && (
             <TutorialModal
               onClose={closeTutorial}
               onTaskComplete={handleTaskComplete}
-            >
-              <h2>Welcome to Teodora's Florist</h2>
-              <p>Complete the following tasks to learn how to use voice commands:</p>
-              <p className="text-lg mt-4">
-                {tutorialProgress === 0 && 'Say "Go to Roses"'}
-                {tutorialProgress === 1 && 'Say "Scroll Down"'}
-                {tutorialProgress === 2 && 'Say "Go Home"'}
-              </p>
-              <div
-                className="progress-bar"
-                style={{
-                  width: `${((tutorialProgress + 1) / 3) * 100}%`,
-                  height: '10px',
-                  background: '#4caf50',
-                  marginTop: '1rem',
-                }}
-              ></div>
-              <button onClick={closeTutorial}>Skip Tutorial</button>
-            </TutorialModal>
+            />
           )}
         </AnimatePresence>
 
