@@ -18,6 +18,8 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import useGazeTracking from './hooks/useGazeTracking';
 import { startCalibration, stopCalibration } from './WebGazer/webGazerUtils';
+import CalibrationOverlay from './components/CalibrationOverlay';
+
 
 function App() {
   const [showGreeting, setShowGreeting] = useState(() => {
@@ -46,6 +48,19 @@ const [purchaseHistory, setPurchaseHistory] = useState(() => {
     tulips: false,
     orchids: false,
   });
+  const [calibrating, setCalibrating] = useState(false);
+
+  const startCalibrationProcess = () => {
+    setCalibrating(true);
+    startCalibration();
+  };
+
+  const completeCalibration = () => {
+    setCalibrating(false);
+    stopCalibration();
+    toast.success('Calibration completed successfully!');
+  };
+
 
   // Synchronize tutorialProgress with localStorage
   useEffect(() => {
@@ -61,23 +76,23 @@ const [purchaseHistory, setPurchaseHistory] = useState(() => {
   const handleGaze = ({ x, y }) => {
     const element = document.elementFromPoint(x, y);
     console.debug('Gaze detected at coordinates:', { x, y });
-    if (element && element.tagName === 'BUTTON') {
-      console.debug('Gaze is over a button:', element.innerText);
-      if (gazeTarget !== element) {
-        setGazeTarget(element);
-        clearTimeout(gazeTimer.current);
-        gazeTimer.current = setTimeout(() => {
-          if (gazeTarget === element) { // Ensure gaze is still on the same button
-            console.debug('Gaze duration met. Activating button:', element.innerText);
-            element.click(); // Trigger button click after 4 seconds of gaze
-            toast.info(`Activated button: ${element.innerText}`);
-          } // Reduced to 2 seconds
-        }, 4000);
+  
+    if (element) {
+      if (element.tagName === 'BUTTON') {
+        console.debug('Gaze is over a button:', element.innerText);
+  
+        // Trigger the button's click event
+        element.click();
+        toast.info(`Activated button: ${element.innerText}`);
+      } else if (element.tagName === 'A') {
+        console.debug('Gaze is over a link:', element.innerText || element.href);
+  
+        // Simulate a click on the link
+        element.click();
+        toast.info(`Navigating to: ${element.innerText || element.href}`);
+      } else {
+        console.debug('Gaze is not over a button or link.');
       }
-    } else {
-      console.debug('Gaze is not over a button or moved away.');
-      setGazeTarget(null);
-      clearTimeout(gazeTimer.current);
     }
   };
 
@@ -391,10 +406,12 @@ const [purchaseHistory, setPurchaseHistory] = useState(() => {
         <ToastContainer position="top-right" autoClose={5000} />
 
         
-        {/* <div className="calibration-controls">
-          <button onClick={startCalibration}>Start Calibration</button>
+        <div className="calibration-controls">
+          <button onClick={startCalibrationProcess}>Start Calibration</button>
           <button onClick={stopCalibration}>Stop Calibration</button>
-        </div> */}
+        </div>
+
+        {calibrating && <CalibrationOverlay onComplete={completeCalibration} />}
         
 
         <AnimatePresence>
