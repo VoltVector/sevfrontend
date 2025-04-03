@@ -14,6 +14,7 @@ function VoiceCommandsPage() {
     { command: 'buy roses', description: 'Purchase Roses.' },
     { command: 'buy tulips', description: 'Purchase Tulips.' },
     { command: 'buy orchids', description: 'Purchase Orchids.' },
+    { command: 'change plant', description: 'Cycle through different plants.' },
   ];
 
   return (

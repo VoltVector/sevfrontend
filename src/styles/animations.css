@@ -1,0 +1,44 @@
+.page-enter {
+  transform: translateX(100%);
+  opacity: 0;
+}
+.page-enter-active {
+  transform: translateX(0);
+  opacity: 1;
+  transition: transform 300ms ease-in-out, opacity 300ms ease-in-out;
+}
+.page-exit {
+  transform: translateX(0);
+  opacity: 1;
+}
+.page-exit-active {
+  transform: translateX(-100%);
+  opacity: 0;
+  transition: transform 300ms ease-in-out, opacity 300ms ease-in-out;
+}
+
+.swipe-container {
+  display: flex;
+  overflow: hidden;
+  position: relative;
+  width: 100%; /* Ensure full width */
+}
+
+.product-card {
+  min-width: 100%; /* Each card takes full width */
+  transition: transform 0.5s ease-in-out;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.swipe-btn {
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.2s ease;
+}
+
+.swipe-btn:hover {
+  background: linear-gradient(135deg, #2575fc, #6a11cb);
+  transform: scale(1.05);
+}

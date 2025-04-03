@@ -1,16 +1,16 @@
 import React from 'react';
 import { flowers } from '../data/flowers';
 
-function OrchidsPage() {
-  const orchidData = flowers.find((flower) => flower.name === "Orchids");
+function MarigoldPage() {
+  const marigoldData = flowers.find((flower) => flower.name === "Marigold");
 
   const handlePurchase = () => {
     const currentBalance = Number(localStorage.getItem('balance'));
-    const price = 30; // Extracted from orchidData.price
+    const price = 18; // Extracted from marigoldData.price
     const purchasedPlants = JSON.parse(localStorage.getItem('purchasedPlants') || '{}');
 
-    if (purchasedPlants.orchids) {
-      alert('You can\'t buy Orchids multiple times.');
+    if (purchasedPlants.marigold) {
+      alert('You can\'t buy Marigold multiple times.');
       return;
     }
 
@@ -19,11 +19,11 @@ function OrchidsPage() {
       localStorage.setItem('balance', newBalance);
 
       const purchaseHistory = JSON.parse(localStorage.getItem('purchaseHistory') || '[]');
-      const newPurchase = { flowerName: 'Orchids', price, date: new Date().toISOString() };
+      const newPurchase = { flowerName: 'Marigold', price, date: new Date().toISOString() };
       const updatedHistory = [...purchaseHistory, newPurchase];
       localStorage.setItem('purchaseHistory', JSON.stringify(updatedHistory));
 
-      purchasedPlants.orchids = true;
+      purchasedPlants.marigold = true;
       localStorage.setItem('purchasedPlants', JSON.stringify(purchasedPlants));
       alert('Purchase successful!');
     } else {
@@ -37,11 +37,11 @@ function OrchidsPage() {
       <header
         className="flower-header"
         style={{
-          backgroundImage: `url(${orchidData.image})`,
-          backgroundSize: 'contain', // Changed to 'contain' for uniform scaling
-          backgroundRepeat: 'no-repeat', // Prevent tiling
+          backgroundImage: `url(${marigoldData.image})`,
+          backgroundSize: 'contain',
+          backgroundRepeat: 'no-repeat',
           backgroundPosition: 'center',
-          height: '50vh', // Adjusted height for better proportions
+          height: '50vh',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
@@ -49,19 +49,20 @@ function OrchidsPage() {
           textShadow: '2px 2px 6px rgba(0, 0, 0, 0.8)',
         }}
       >
-        <h1 className="text-6xl font-extrabold">{orchidData.name}</h1>
+        <h1 className="text-6xl font-extrabold">{marigoldData.name}</h1>
       </header>
 
       {/* Product Details */}
       <main className="flower-main">
         <div className="product-details text-center">
-          <p className="text-lg mt-4 text-gray-700">{orchidData.description}</p>
-          <p className="text-3xl font-bold text-green-700 mt-4">{orchidData.price}</p>
+          <p className="text-lg mt-4 text-gray-700">{marigoldData.description}</p>
+          <p className="text-3xl font-bold text-green-700 mt-4">{marigoldData.price}</p>
           <button
             className="buy-now-btn mt-6"
+            onClick={handlePurchase}
             style={{
               padding: '1rem 2rem',
-              background: 'linear-gradient(135deg, #ff7eb3, #ff758c)',
+              background: 'linear-gradient(135deg, #ffcc00, #ff9900)',
               color: 'white',
               border: 'none',
               borderRadius: '12px',
@@ -76,7 +77,6 @@ function OrchidsPage() {
             onMouseLeave={(e) => {
               e.target.style.transform = 'scale(1)';
             }}
-            onClick={handlePurchase}
           >
             Buy Now
           </button>
@@ -84,23 +84,23 @@ function OrchidsPage() {
 
         {/* Additional Information */}
         <div className="flower-more-info mt-8">
-          <h2 className="text-3xl font-bold text-indigo-600">Why Choose Orchids?</h2>
+          <h2 className="text-3xl font-bold text-orange-600">Why Choose Marigolds?</h2>
           <p className="text-lg mt-4 text-gray-700">
-            Orchids are a symbol of elegance and luxury. Their exotic beauty and intricate patterns make them a sophisticated choice for any occasion.
+            Marigolds are known for their vibrant orange and yellow hues, symbolizing warmth and positivity. They are perfect for brightening up any garden.
           </p>
           <p className="text-lg mt-4 text-gray-700">
-            They are perfect for adding a touch of refinement to your home or as a thoughtful gift for someone special.
+            These flowers are easy to grow and maintain, making them a favorite among gardeners. They also have natural pest-repellent properties.
           </p>
         </div>
 
-        {/* More Information */}
+        {/* More About Marigolds */}
         <div className="flower-more-info mt-8" style={{ display: 'block' }}>
-          <h2 className="text-3xl font-bold text-indigo-600">More About Orchids</h2>
+          <h2 className="text-3xl font-bold text-orange-600">More About Marigolds</h2>
           <p className="text-lg mt-4 text-gray-700">
-            Orchids are one of the largest families of flowering plants, with over 25,000 species. They are known for their resilience and adaptability.
+            Marigolds have been cherished for centuries in various cultures for their beauty and symbolism. They are often used in festivals and ceremonies.
           </p>
           <p className="text-lg mt-4 text-gray-700">
-            Each orchid variety has its own unique charm, from the vibrant Phalaenopsis to the delicate Dendrobium. They symbolize beauty, strength, and love.
+            Their bright colors and cheerful appearance make them a popular choice for decorations and gifts.
           </p>
         </div>
       </main>
@@ -108,4 +108,4 @@ function OrchidsPage() {
   );
 }
 
-export default OrchidsPage;
+export default MarigoldPage;

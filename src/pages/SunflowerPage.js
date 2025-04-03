@@ -1,16 +1,16 @@
 import React from 'react';
 import { flowers } from '../data/flowers';
 
-function OrchidsPage() {
-  const orchidData = flowers.find((flower) => flower.name === "Orchids");
+function SunflowerPage() {
+  const sunflowerData = flowers.find((flower) => flower.name === "Sunflowers");
 
   const handlePurchase = () => {
     const currentBalance = Number(localStorage.getItem('balance'));
-    const price = 30; // Extracted from orchidData.price
+    const price = 15; // Extracted from sunflowerData.price
     const purchasedPlants = JSON.parse(localStorage.getItem('purchasedPlants') || '{}');
 
-    if (purchasedPlants.orchids) {
-      alert('You can\'t buy Orchids multiple times.');
+    if (purchasedPlants.sunflowers) {
+      alert('You can\'t buy Sunflowers multiple times.');
       return;
     }
 
@@ -19,11 +19,11 @@ function OrchidsPage() {
       localStorage.setItem('balance', newBalance);
 
       const purchaseHistory = JSON.parse(localStorage.getItem('purchaseHistory') || '[]');
-      const newPurchase = { flowerName: 'Orchids', price, date: new Date().toISOString() };
+      const newPurchase = { flowerName: 'Sunflowers', price, date: new Date().toISOString() };
       const updatedHistory = [...purchaseHistory, newPurchase];
       localStorage.setItem('purchaseHistory', JSON.stringify(updatedHistory));
 
-      purchasedPlants.orchids = true;
+      purchasedPlants.sunflowers = true;
       localStorage.setItem('purchasedPlants', JSON.stringify(purchasedPlants));
       alert('Purchase successful!');
     } else {
@@ -33,15 +33,14 @@ function OrchidsPage() {
 
   return (
     <div className="flower-page">
-      {/* Hero Section */}
       <header
         className="flower-header"
         style={{
-          backgroundImage: `url(${orchidData.image})`,
-          backgroundSize: 'contain', // Changed to 'contain' for uniform scaling
-          backgroundRepeat: 'no-repeat', // Prevent tiling
+          backgroundImage: `url(${sunflowerData.image})`,
+          backgroundSize: 'contain',
+          backgroundRepeat: 'no-repeat',
           backgroundPosition: 'center',
-          height: '50vh', // Adjusted height for better proportions
+          height: '50vh',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
@@ -49,19 +48,19 @@ function OrchidsPage() {
           textShadow: '2px 2px 6px rgba(0, 0, 0, 0.8)',
         }}
       >
-        <h1 className="text-6xl font-extrabold">{orchidData.name}</h1>
+        <h1 className="text-6xl font-extrabold">{sunflowerData.name}</h1>
       </header>
 
-      {/* Product Details */}
       <main className="flower-main">
         <div className="product-details text-center">
-          <p className="text-lg mt-4 text-gray-700">{orchidData.description}</p>
-          <p className="text-3xl font-bold text-green-700 mt-4">{orchidData.price}</p>
+          <p className="text-lg mt-4 text-gray-700">{sunflowerData.description}</p>
+          <p className="text-3xl font-bold text-green-700 mt-4">{sunflowerData.price}</p>
           <button
             className="buy-now-btn mt-6"
+            onClick={handlePurchase}
             style={{
               padding: '1rem 2rem',
-              background: 'linear-gradient(135deg, #ff7eb3, #ff758c)',
+              background: 'linear-gradient(135deg, #ffeb3b, #ffc107)',
               color: 'white',
               border: 'none',
               borderRadius: '12px',
@@ -76,31 +75,28 @@ function OrchidsPage() {
             onMouseLeave={(e) => {
               e.target.style.transform = 'scale(1)';
             }}
-            onClick={handlePurchase}
           >
             Buy Now
           </button>
         </div>
 
-        {/* Additional Information */}
         <div className="flower-more-info mt-8">
-          <h2 className="text-3xl font-bold text-indigo-600">Why Choose Orchids?</h2>
+          <h2 className="text-3xl font-bold text-yellow-600">Why Choose Sunflowers?</h2>
           <p className="text-lg mt-4 text-gray-700">
-            Orchids are a symbol of elegance and luxury. Their exotic beauty and intricate patterns make them a sophisticated choice for any occasion.
+            Sunflowers are a symbol of happiness and positivity. Their bright yellow petals and towering stems bring warmth and cheer to any space.
           </p>
           <p className="text-lg mt-4 text-gray-700">
-            They are perfect for adding a touch of refinement to your home or as a thoughtful gift for someone special.
+            They are perfect for summer celebrations, garden displays, or as a gift to brighten someone's day.
           </p>
         </div>
 
-        {/* More Information */}
         <div className="flower-more-info mt-8" style={{ display: 'block' }}>
-          <h2 className="text-3xl font-bold text-indigo-600">More About Orchids</h2>
+          <h2 className="text-3xl font-bold text-yellow-600">More About Sunflowers</h2>
           <p className="text-lg mt-4 text-gray-700">
-            Orchids are one of the largest families of flowering plants, with over 25,000 species. They are known for their resilience and adaptability.
+            Sunflowers are native to North America and have been cultivated for thousands of years. They are known for their ability to track the sun.
           </p>
           <p className="text-lg mt-4 text-gray-700">
-            Each orchid variety has its own unique charm, from the vibrant Phalaenopsis to the delicate Dendrobium. They symbolize beauty, strength, and love.
+            Beyond their beauty, sunflowers are also valued for their seeds, which are a source of nutrition and oil. They symbolize loyalty and longevity.
           </p>
         </div>
       </main>
@@ -108,4 +104,4 @@ function OrchidsPage() {
   );
 }
 
-export default OrchidsPage;
+export default SunflowerPage;

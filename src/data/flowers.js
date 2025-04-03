@@ -1,6 +1,8 @@
 import rosesImage from "../images/roses.jpg";
 import tulipsImage from "../images/tulips.jpg";
 import orchidsImage from "../images/orchids.jpg";
+import sunflowersImage from "../images/sunflowers.jpg";
+import marigoldImage from "../images/marigold.jpg";
 
 export const flowers = [
     {
@@ -23,5 +25,19 @@ export const flowers = [
       description: "Elegant orchids for a touch of luxury.",
       price: "$30 per bouquet",
       image: orchidsImage,
+    },
+    {
+      id: 4,
+      name: "Sunflowers",
+      description: "Ready to defend your lawn!",
+      price: "$50 per bouquet",
+      image: sunflowersImage,
+    },
+    {
+      id: 5,
+      name: "Marigold",
+      description: "Vibrant marigolds to brighten your garden.",
+      price: "$18 per bouquet",
+      image: marigoldImage,
     },
 ];

@@ -10,6 +10,8 @@ import TulipsPage from './pages/TulipsPage';
 import OrchidsPage from './pages/OrchidsPage';
 import VoiceCommandsPage from './pages/VoiceCommandsPage';
 import PurchaseHistoryPage from './pages/PurchaseHistoryPage';
+import SunflowerPage from './pages/SunflowerPage';
+import MarigoldPage from './pages/MarigoldPage';
 import { AnimatePresence } from 'framer-motion';
 import annyang from 'annyang';
 import { ToastContainer, toast } from 'react-toastify';
@@ -38,6 +40,11 @@ const [purchaseHistory, setPurchaseHistory] = useState(() => {
   const [balance, setBalance] = useState(() => {
     const savedBalance = localStorage.getItem('balance');
     return savedBalance ? Number(savedBalance) : 100; // Initialize with $100 if not set
+  });
+  const [purchasedPlants, setPurchasedPlants] = useState({
+    roses: false,
+    tulips: false,
+    orchids: false,
   });
 
   // Synchronize tutorialProgress with localStorage
@@ -168,7 +175,13 @@ const [purchaseHistory, setPurchaseHistory] = useState(() => {
     }
   }, [showGreeting]);
 
-  const buyFlower = (flowerName, price) => {
+  const buyFlower = (flowerName, price, plantKey) => {
+    if (purchasedPlants[plantKey]) {
+      // Warn the user if the item has already been purchased
+      toast.warn(`You can't buy ${flowerName} multiple times.`);
+      return;
+    }
+
     if (balance >= price) {
       const newBalance = balance - price;
       setBalance(newBalance); // Update balance state
@@ -179,6 +192,7 @@ const [purchaseHistory, setPurchaseHistory] = useState(() => {
       const updatedHistory = [...purchaseHistory, newPurchase];
       localStorage.setItem('purchaseHistory', JSON.stringify(updatedHistory));
 
+      setPurchasedPlants((prev) => ({ ...prev, [plantKey]: true })); // Mark as purchased
       toast.success(`Successfully purchased ${flowerName}!`);
     } else {
       toast.error('Insufficient balance!');
@@ -191,6 +205,9 @@ const [purchaseHistory, setPurchaseHistory] = useState(() => {
 
   useEffect(() => {
     if (annyang && voiceCommandsEnabled) {
+      const pages = ['/roses', '/tulips', '/orchids', '/sunflowers'];
+      let currentIndex = pages.indexOf(window.location.pathname);
+
       const voiceCommands = {
         'show welcome message': () => {
           if (tutorialProgress === 1) {
@@ -244,6 +261,14 @@ const [purchaseHistory, setPurchaseHistory] = useState(() => {
           toast.info('Navigating to Orchids...');
           window.location.href = '/orchids';
         },
+        'go to sunflowers': () => {
+          toast.info('Navigating to Sunflowers...');
+          window.location.href = '/sunflowers';
+        },
+        'go to marigold': () => {
+          toast.info('Navigating to Marigold...');
+          window.location.href = '/marigold';
+        },
         'go to purchase history': () => {
           toast.info('Navigating to Purchase History...');
           window.location.href = '/purchase-history';
@@ -267,24 +292,54 @@ const [purchaseHistory, setPurchaseHistory] = useState(() => {
           window.scrollBy({ top: -500, behavior: 'smooth' });
         },
         'show more information': () => {
-          toast.info('Displaying more information...');
           const infoElement = document.querySelector('.flower-more-info');
           if (infoElement) {
-            infoElement.style.display = 'block';
+            const isVisible = infoElement.style.display === 'block';
+            infoElement.style.display = isVisible ? 'none' : 'block';
+            toast.info(isVisible ? 'Hiding more information.' : 'Showing more information.');
+          } else {
+            toast.error('No additional information available on this page.');
           }
         },
-        'buy :plant': (plant) => {
-          const flowers = {
-            roses: 25,
-            tulips: 20,
-            orchids: 30,
-          };
-          const price = flowers[plant.toLowerCase()];
-          if (price) {
-            buyFlower(plant, price);
+        'buy roses': () => {
+          if (window.location.pathname === '/roses') {
+            buyFlower('Roses', 25, 'roses');
           } else {
-            toast.error(`Sorry, we don't sell ${plant}.`);
+            toast.error('You can only buy Roses from the Roses page.');
           }
+        },
+        'buy tulips': () => {
+          if (window.location.pathname === '/tulips') {
+            buyFlower('Tulips', 20, 'tulips');
+          } else {
+            toast.error('You can only buy Tulips from the Tulips page.');
+          }
+        },
+        'buy orchids': () => {
+          if (window.location.pathname === '/orchids') {
+            buyFlower('Orchids', 30, 'orchids');
+          } else {
+            toast.error('You can only buy Orchids from the Orchids page.');
+          }
+        },
+        'buy sunflowers': () => {
+          if (window.location.pathname === '/sunflowers') {
+            buyFlower('Sunflowers', 50, 'sunflowers');
+          } else {
+            toast.error('You can only buy sunflowers from the Sunflowers page.');
+          }
+        },
+        'buy marigold': () => {
+          if (window.location.pathname === '/marigold') {
+            buyFlower('Marigold', 18, 'marigold');
+          } else {
+            toast.error('You can only buy marigold from the Marigold page.');
+          }
+        },
+        'change plant': () => {
+          currentIndex = (currentIndex + 1) % pages.length;
+          toast.info(`Navigating to ${pages[currentIndex].replace('/', '')}...`);
+          window.location.href = pages[currentIndex];
         },
       };
 
@@ -292,10 +347,32 @@ const [purchaseHistory, setPurchaseHistory] = useState(() => {
       annyang.start();
 
       return () => {
-        annyang.removeCommands(['buy :plant']);
+        annyang.removeCommands([
+          'show welcome message',
+          'finish tutorial',
+          'go to voice commands',
+          'go to home',
+          'go to roses',
+          'go to tulips',
+          'go to orchids',
+          'go to sunflowers',
+          'go to marigold',
+          'go to purchase history',
+          'scroll down',
+          'close tutorial',
+          'restart tutorial',
+          'scroll up',
+          'show more information',
+          'buy roses',
+          'buy tulips',
+          'buy orchids',
+          'buy sunflowers',
+          'buy marigold',
+          'change plant',
+        ]);
       };
     }
-  }, [tutorialProgress, voiceCommandsEnabled]);
+  }, [tutorialProgress, voiceCommandsEnabled, purchasedPlants]);
 
   console.log('tutorialProgress:', tutorialProgress);
 
@@ -313,10 +390,12 @@ const [purchaseHistory, setPurchaseHistory] = useState(() => {
 
         <ToastContainer position="top-right" autoClose={5000} />
 
-        <div className="calibration-controls">
+        
+        {/* <div className="calibration-controls">
           <button onClick={startCalibration}>Start Calibration</button>
           <button onClick={stopCalibration}>Stop Calibration</button>
-        </div>
+        </div> */}
+        
 
         <AnimatePresence>
           {showGreeting && (
@@ -344,9 +423,10 @@ const [purchaseHistory, setPurchaseHistory] = useState(() => {
           <Route path="/roses" element={<RosesPage />} />
           <Route path="/tulips" element={<TulipsPage />} />
           <Route path="/orchids" element={<OrchidsPage />} />
+          <Route path="/sunflowers" element={<SunflowerPage />} />
           <Route path="/voice-commands" element={<VoiceCommandsPage />} />
           <Route path="/purchase-history" element={<PurchaseHistoryPage />} />
-
+          <Route path="/marigold" element={<MarigoldPage />} />
         </Routes>
 
         <Footer />
