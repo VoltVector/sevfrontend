@@ -36,7 +36,7 @@ export const flowers = [
     {
       id: 5,
       name: "Marigold",
-      description: "Vibrant marigolds to brighten your garden.",
+      description: "Vibrant marigolds to brighten your garden (with coins, probably.).",
       price: "$18 per bouquet",
       image: marigoldImage,
     },
