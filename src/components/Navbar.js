@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
+import { useEffect, useState } from 'react';
 
-function Navbar({ toggleVoiceCommands, voiceCommandsEnabled, toggleGazing, gazingEnabled, tutorialProgress }) {
+function Navbar({ toggleVoiceCommands, voiceCommandsEnabled, toggleGazing, gazingEnabled, tutorialProgress, balance }) {
   const progressPercentage = tutorialProgress === 3 ? 100 : (tutorialProgress / 3) * 100;
 
   return (
@@ -27,6 +28,9 @@ function Navbar({ toggleVoiceCommands, voiceCommandsEnabled, toggleGazing, gazin
         >
           Teodora's Florist
         </h1>
+        <div style={{ fontSize: '1.2rem', fontWeight: 'bold' }}>
+          Balance: ${balance} {/* Display the updated balance */}
+        </div>
         <button
           className="tutorial-progress-btn"
           style={{
@@ -72,6 +76,27 @@ function Navbar({ toggleVoiceCommands, voiceCommandsEnabled, toggleGazing, gazin
           }}
         >
           Voice Commands
+        </Link>
+        <Link
+          to="/purchase-history"
+          style={{
+            padding: '0.5rem 1rem',
+            background: 'linear-gradient(135deg, #6a11cb, #2575fc)',
+            color: 'white',
+            borderRadius: '8px',
+            textDecoration: 'none',
+            fontWeight: 'bold',
+            boxShadow: '0 2px 4px rgba(0, 0, 0, 0.2)',
+            transition: 'background 0.3s ease, transform 0.2s ease',
+          }}
+          onMouseEnter={(e) => {
+            e.target.style.transform = 'scale(1.05)';
+          }}
+          onMouseLeave={(e) => {
+            e.target.style.transform = 'scale(1)';
+          }}
+        >
+          Purchase History
         </Link>
         <button
           onClick={toggleVoiceCommands}

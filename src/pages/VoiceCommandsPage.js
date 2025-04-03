@@ -4,11 +4,16 @@ function VoiceCommandsPage() {
   const commands = [
     { command: 'go to roses', description: 'Navigate to the Roses page.' },
     { command: 'scroll down', description: 'Scroll down the page.' },
-    { command: 'go home', description: 'Navigate back to the Home page.' },
+    { command: 'go to home', description: 'Navigate back to the Home page.' },
     { command: 'close tutorial', description: 'Close the tutorial modal.' },
-    { command: 'restart tutorial', description: 'Restart the tutorial from the beginning.' },
+    /* { command: 'restart tutorial', description: 'Restart the tutorial from the beginning.' }, */
+    { command: 'go to tulips', description: 'Navigate to the Tulips page.' },
+    { command: 'go to orchids', description: 'Navigate to the Orchids page.' },
     { command: 'scroll up', description: 'Scroll up the page.' },
     { command: 'show more information', description: 'Display additional information about flowers.' },
+    { command: 'buy roses', description: 'Purchase Roses.' },
+    { command: 'buy tulips', description: 'Purchase Tulips.' },
+    { command: 'buy orchids', description: 'Purchase Orchids.' },
   ];
 
   return (

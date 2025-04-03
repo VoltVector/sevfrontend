@@ -4,6 +4,18 @@ import { flowers } from '../data/flowers';
 function RosesPage() {
   const roseData = flowers.find((flower) => flower.name === "Roses");
 
+  const handlePurchase = () => {
+    const currentBalance = Number(localStorage.getItem('balance'));
+    const price = 25; // Extracted from roseData.price
+    if (currentBalance >= price) {
+      const newBalance = currentBalance - price;
+      localStorage.setItem('balance', newBalance);
+      alert('Purchase successful!');
+    } else {
+      alert('Insufficient balance!');
+    }
+  };
+
   return (
     <div className="flower-page">
       {/* Hero Section */}
@@ -31,6 +43,7 @@ function RosesPage() {
           <p className="text-2xl font-bold text-green-600 mt-4">{roseData.price}</p>
           <button
             className="buy-now-btn mt-6"
+            onClick={handlePurchase}
             style={{
               padding: '0.75rem 1.5rem',
               background: 'linear-gradient(135deg, #6a11cb, #2575fc)',

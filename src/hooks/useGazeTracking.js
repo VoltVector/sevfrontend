@@ -1,14 +1,19 @@
 import { useEffect } from 'react';
 import { initializeWebGazer, safelyEndWebGazer } from '../WebGazer/webGazerUtils';
 
-const useGazeTracking = (onGaze) => {
+const useGazeTracking = (onGaze, gazingEnabled) => {
   useEffect(() => {
+    if (!gazingEnabled) {
+      safelyEndWebGazer(window.webgazer); // Stop WebGazer when gazing is disabled
+      return;
+    }
+
     const webgazer = initializeWebGazer(onGaze);
 
     return () => {
-      safelyEndWebGazer(webgazer); // Use safe cleanup
+      safelyEndWebGazer(webgazer); // Cleanup WebGazer on unmount
     };
-  }, [onGaze]);
+  }, [onGaze, gazingEnabled]);
 };
 
 export default useGazeTracking;

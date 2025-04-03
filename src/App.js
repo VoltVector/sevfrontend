@@ -9,11 +9,13 @@ import RosesPage from './pages/RosesPage';
 import TulipsPage from './pages/TulipsPage';
 import OrchidsPage from './pages/OrchidsPage';
 import VoiceCommandsPage from './pages/VoiceCommandsPage';
+import PurchaseHistoryPage from './pages/PurchaseHistoryPage';
 import { AnimatePresence } from 'framer-motion';
 import annyang from 'annyang';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import useGazeTracking from './hooks/useGazeTracking';
+import { startCalibration, stopCalibration } from './WebGazer/webGazerUtils';
 
 function App() {
   const [showGreeting, setShowGreeting] = useState(() => {
@@ -28,11 +30,26 @@ function App() {
   const [voiceCommandsEnabled, setVoiceCommandsEnabled] = useState(true);
   const [gazeTarget, setGazeTarget] = useState(null);
   const gazeTimer = useRef(null);
+  const [gazingEnabled, setGazingEnabled] = useState(true);
+const [purchaseHistory, setPurchaseHistory] = useState(() => {
+    const savedHistory = localStorage.getItem('purchaseHistory');
+    return savedHistory ? JSON.parse(savedHistory) : [];
+  });
+  const [balance, setBalance] = useState(() => {
+    const savedBalance = localStorage.getItem('balance');
+    return savedBalance ? Number(savedBalance) : 100; // Initialize with $100 if not set
+  });
 
   // Synchronize tutorialProgress with localStorage
   useEffect(() => {
     localStorage.setItem('tutorialProgress', tutorialProgress);
   }, [tutorialProgress]);
+
+  useEffect(() => {
+    if (!localStorage.getItem('userBalance')) {
+      localStorage.setItem('userBalance', '100'); // Initialize balance with $100
+    }
+  }, []);
 
   const handleGaze = ({ x, y }) => {
     const element = document.elementFromPoint(x, y);
@@ -43,9 +60,11 @@ function App() {
         setGazeTarget(element);
         clearTimeout(gazeTimer.current);
         gazeTimer.current = setTimeout(() => {
-          console.debug('Gaze duration met. Activating button:', element.innerText);
-          element.click(); // Trigger button click after 4 seconds of gaze
-          toast.info(`Activated button: ${element.innerText}`);
+          if (gazeTarget === element) { // Ensure gaze is still on the same button
+            console.debug('Gaze duration met. Activating button:', element.innerText);
+            element.click(); // Trigger button click after 4 seconds of gaze
+            toast.info(`Activated button: ${element.innerText}`);
+          } // Reduced to 2 seconds
         }, 4000);
       }
     } else {
@@ -61,7 +80,7 @@ function App() {
     };
   }, []);
 
-  useGazeTracking(handleGaze);
+  useGazeTracking(handleGaze, gazingEnabled);
 
   const startTutorial = () => {
     setShowGreeting(false);
@@ -117,6 +136,18 @@ function App() {
     }
   };
 
+  const toggleGazing = () => {
+    setGazingEnabled((prev) => !prev);
+    toast.info(gazingEnabled ? 'Gazing disabled. Camera input stopped.' : 'Gazing enabled.');
+  };
+
+  useEffect(() => {
+    if (!gazingEnabled) {
+      setGazeTarget(null);
+      clearTimeout(gazeTimer.current);
+    }
+  }, [gazingEnabled]);
+
   useEffect(() => {
     if (annyang && showGreeting) {
       const greetingCommands = {
@@ -136,6 +167,27 @@ function App() {
       };
     }
   }, [showGreeting]);
+
+  const buyFlower = (flowerName, price) => {
+    if (balance >= price) {
+      const newBalance = balance - price;
+      setBalance(newBalance); // Update balance state
+      localStorage.setItem('balance', newBalance);
+
+      const purchaseHistory = JSON.parse(localStorage.getItem('purchaseHistory') || '[]');
+      const newPurchase = { flowerName, price, date: new Date().toISOString() };
+      const updatedHistory = [...purchaseHistory, newPurchase];
+      localStorage.setItem('purchaseHistory', JSON.stringify(updatedHistory));
+
+      toast.success(`Successfully purchased ${flowerName}!`);
+    } else {
+      toast.error('Insufficient balance!');
+    }
+  };
+
+  useEffect(() => {
+    localStorage.setItem('balance', balance); // Synchronize balance with localStorage
+  }, [balance]);
 
   useEffect(() => {
     if (annyang && voiceCommandsEnabled) {
@@ -192,7 +244,10 @@ function App() {
           toast.info('Navigating to Orchids...');
           window.location.href = '/orchids';
         },
-
+        'go to purchase history': () => {
+          toast.info('Navigating to Purchase History...');
+          window.location.href = '/purchase-history';
+        },
         'scroll down': () => {
           toast.info('Scrolling down...');
           window.scrollBy({ top: 500, behavior: 'smooth' });
@@ -218,13 +273,26 @@ function App() {
             infoElement.style.display = 'block';
           }
         },
+        'buy :plant': (plant) => {
+          const flowers = {
+            roses: 25,
+            tulips: 20,
+            orchids: 30,
+          };
+          const price = flowers[plant.toLowerCase()];
+          if (price) {
+            buyFlower(plant, price);
+          } else {
+            toast.error(`Sorry, we don't sell ${plant}.`);
+          }
+        },
       };
 
       annyang.addCommands(voiceCommands);
       annyang.start();
 
       return () => {
-        annyang.abort();
+        annyang.removeCommands(['buy :plant']);
       };
     }
   }, [tutorialProgress, voiceCommandsEnabled]);
@@ -237,10 +305,18 @@ function App() {
         <Navbar
           toggleVoiceCommands={toggleVoiceCommands}
           voiceCommandsEnabled={voiceCommandsEnabled}
+          toggleGazing={toggleGazing}
+          gazingEnabled={gazingEnabled}
           tutorialProgress={tutorialProgress}
+          balance={balance} // Pass balance to Navbar
         />
 
         <ToastContainer position="top-right" autoClose={5000} />
+
+        <div className="calibration-controls">
+          <button onClick={startCalibration}>Start Calibration</button>
+          <button onClick={stopCalibration}>Stop Calibration</button>
+        </div>
 
         <AnimatePresence>
           {showGreeting && (
@@ -269,6 +345,8 @@ function App() {
           <Route path="/tulips" element={<TulipsPage />} />
           <Route path="/orchids" element={<OrchidsPage />} />
           <Route path="/voice-commands" element={<VoiceCommandsPage />} />
+          <Route path="/purchase-history" element={<PurchaseHistoryPage />} />
+
         </Routes>
 
         <Footer />

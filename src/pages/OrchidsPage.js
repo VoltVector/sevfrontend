@@ -4,6 +4,18 @@ import { flowers } from '../data/flowers';
 function OrchidsPage() {
   const orchidData = flowers.find((flower) => flower.name === "Orchids");
 
+  const handlePurchase = () => {
+    const currentBalance = Number(localStorage.getItem('balance'));
+    const price = 30; // Extracted from orchidData.price
+    if (currentBalance >= price) {
+      const newBalance = currentBalance - price;
+      localStorage.setItem('balance', newBalance);
+      alert('Purchase successful!');
+    } else {
+      alert('Insufficient balance!');
+    }
+  };
+
   return (
     <div className="flower-page">
       {/* Hero Section */}
@@ -48,6 +60,7 @@ function OrchidsPage() {
             onMouseLeave={(e) => {
               e.target.style.transform = 'scale(1)';
             }}
+            onClick={handlePurchase}
           >
             Buy Now
           </button>
