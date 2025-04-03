@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 
-function Navbar({ toggleVoiceCommands, voiceCommandsEnabled, tutorialProgress }) {
+function Navbar({ toggleVoiceCommands, voiceCommandsEnabled, toggleGazing, gazingEnabled, tutorialProgress }) {
   const progressPercentage = tutorialProgress === 3 ? 100 : (tutorialProgress / 3) * 100;
 
   return (
@@ -96,6 +96,30 @@ function Navbar({ toggleVoiceCommands, voiceCommandsEnabled, tutorialProgress })
           }}
         >
           {voiceCommandsEnabled ? 'Disable Voice Commands' : 'Enable Voice Commands'}
+        </button>
+        <button
+          onClick={toggleGazing}
+          className="toggle-gazing-btn"
+          style={{
+            padding: '0.75rem 1.5rem',
+            background: gazingEnabled ? '#dc3545' : '#28a745',
+            color: 'white',
+            border: 'none',
+            borderRadius: '8px',
+            cursor: 'pointer',
+            fontSize: '1rem',
+            fontWeight: 'bold',
+            boxShadow: '0 2px 4px rgba(0, 0, 0, 0.2)',
+            transition: 'background 0.3s ease, transform 0.2s ease',
+          }}
+          onMouseEnter={(e) => {
+            e.target.style.transform = 'scale(1.05)';
+          }}
+          onMouseLeave={(e) => {
+            e.target.style.transform = 'scale(1)';
+          }}
+        >
+          {gazingEnabled ? 'Disable Gazing' : 'Enable Gazing'}
         </button>
       </div>
     </nav>

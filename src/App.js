@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import './AppTailwind.css';
 import Navbar from './components/Navbar';
@@ -13,6 +13,7 @@ import { AnimatePresence } from 'framer-motion';
 import annyang from 'annyang';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import useGazeTracking from './hooks/useGazeTracking';
 
 function App() {
   const [showGreeting, setShowGreeting] = useState(() => {
@@ -25,11 +26,38 @@ function App() {
     return savedProgress ? parseInt(savedProgress, 10) : 0;
   });
   const [voiceCommandsEnabled, setVoiceCommandsEnabled] = useState(true);
+  const [gazeTarget, setGazeTarget] = useState(null);
+  const gazeTimer = useRef(null);
 
   // Synchronize tutorialProgress with localStorage
   useEffect(() => {
     localStorage.setItem('tutorialProgress', tutorialProgress);
   }, [tutorialProgress]);
+
+  const handleGaze = ({ x, y }) => {
+    const element = document.elementFromPoint(x, y);
+    if (element && element.tagName === 'BUTTON') {
+      if (gazeTarget !== element) {
+        setGazeTarget(element);
+        clearTimeout(gazeTimer.current);
+        gazeTimer.current = setTimeout(() => {
+          element.click(); // Trigger button click after 4 seconds of gaze
+          toast.info(`Activated button: ${element.innerText}`);
+        }, 4000);
+      }
+    } else {
+      setGazeTarget(null);
+      clearTimeout(gazeTimer.current);
+    }
+  };
+
+  useEffect(() => {
+    return () => {
+      clearTimeout(gazeTimer.current); // Cleanup timer on unmount
+    };
+  }, []);
+
+  useGazeTracking(handleGaze);
 
   const startTutorial = () => {
     setShowGreeting(false);
