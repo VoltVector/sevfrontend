@@ -36,16 +36,20 @@ function App() {
 
   const handleGaze = ({ x, y }) => {
     const element = document.elementFromPoint(x, y);
+    console.debug('Gaze detected at coordinates:', { x, y });
     if (element && element.tagName === 'BUTTON') {
+      console.debug('Gaze is over a button:', element.innerText);
       if (gazeTarget !== element) {
         setGazeTarget(element);
         clearTimeout(gazeTimer.current);
         gazeTimer.current = setTimeout(() => {
+          console.debug('Gaze duration met. Activating button:', element.innerText);
           element.click(); // Trigger button click after 4 seconds of gaze
           toast.info(`Activated button: ${element.innerText}`);
         }, 4000);
       }
     } else {
+      console.debug('Gaze is not over a button or moved away.');
       setGazeTarget(null);
       clearTimeout(gazeTimer.current);
     }
