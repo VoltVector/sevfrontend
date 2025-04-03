@@ -15,13 +15,21 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 function App() {
-  const [showGreeting, setShowGreeting] = useState(true);
+  const [showGreeting, setShowGreeting] = useState(() => {
+    const tutorialCompleted = localStorage.getItem('tutorialCompleted') === 'true';
+    return !tutorialCompleted; // Show greeting only if tutorial is not completed
+  });
   const [showTutorial, setShowTutorial] = useState(false);
   const [tutorialProgress, setTutorialProgress] = useState(() => {
     const savedProgress = localStorage.getItem('tutorialProgress');
     return savedProgress ? parseInt(savedProgress, 10) : 0;
   });
   const [voiceCommandsEnabled, setVoiceCommandsEnabled] = useState(true);
+
+  // Synchronize tutorialProgress with localStorage
+  useEffect(() => {
+    localStorage.setItem('tutorialProgress', tutorialProgress);
+  }, [tutorialProgress]);
 
   const startTutorial = () => {
     setShowGreeting(false);
@@ -52,12 +60,11 @@ function App() {
 
   const closeTutorial = () => {
     setShowTutorial(false);
-    localStorage.setItem('tutorialCompleted', 'true');
+    localStorage.setItem('tutorialCompleted', 'true'); // Mark tutorial as completed
   };
 
   const handleTaskComplete = (progress) => {
     setTutorialProgress(progress);
-    localStorage.setItem('tutorialProgress', progress);
 
     if (progress === 3) { // Tutorial is completed
       toast.success('Tutorial completed! You can now explore the site.');
@@ -166,7 +173,7 @@ function App() {
           toast.info('Restarting tutorial...');
           setShowTutorial(true);
           setTutorialProgress(0);
-          localStorage.setItem('tutorialProgress', 0);
+          localStorage.setItem('tutorialCompleted', 'false'); // Reset tutorial completion
         },
         'scroll up': () => {
           toast.info('Scrolling up...');
