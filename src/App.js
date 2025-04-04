@@ -107,6 +107,7 @@ const [purchaseHistory, setPurchaseHistory] = useState(() => {
       .sort((a, b) => b.similarity - a.similarity)
       .slice(0, 2); // Top 2 recommendations
   
+    console.log('Generated recommendations:', newRecommendations); // Debugging
     setRecommendations(newRecommendations); // Save recommendations to state
   
     if (newRecommendations.length > 0) {

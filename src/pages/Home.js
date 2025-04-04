@@ -6,6 +6,7 @@ import CalibrationOverlay from '../components/CalibrationOverlay';
 import './Home.css';
 
 const Home = ({ startCalibrationProcess, stopCalibration, calibrating, completeCalibration, recommendations }) => {
+  console.log('Recommendations:', recommendations.length);
   return (
     <div className="home-container">
       <main className="App-main">
@@ -58,6 +59,7 @@ const Home = ({ startCalibrationProcess, stopCalibration, calibrating, completeC
         ))}
 
         {/* Recommendations Section */}
+        
         {recommendations.length > 0 && (
           <div className="recommendations-section mt-8">
             <h2 className="text-2xl font-bold mb-4">Recommended for You</h2>
