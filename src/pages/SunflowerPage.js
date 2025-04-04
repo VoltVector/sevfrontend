@@ -37,30 +37,33 @@ function SunflowerPage() {
         className="flower-header"
         style={{
           backgroundImage: `url(${sunflowerData.image})`,
-          backgroundSize: 'contain',
+          backgroundSize: 'cover',
           backgroundRepeat: 'no-repeat',
           backgroundPosition: 'center',
-          height: '50vh',
+          height: '60vh',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          color: 'white',
-          textShadow: '2px 2px 6px rgba(0, 0, 0, 0.8)',
+          color: '#fff',
+          textShadow: '3px 3px 8px rgba(0, 0, 0, 0.7)',
         }}
       >
-        <h1 className="text-6xl font-extrabold">{sunflowerData.name}</h1>
       </header>
 
       <main className="flower-main">
         <div className="product-details text-center">
-          <p className="text-lg mt-4 text-gray-700">{sunflowerData.description}</p>
-          <p className="text-3xl font-bold text-green-700 mt-4">{sunflowerData.price}</p>
+          <p className="text-lg mt-4 text-gray-700" style={{ lineHeight: '1.8', fontStyle: 'italic' }}>
+            {sunflowerData.description}
+          </p>
+          <p className="text-3xl font-bold text-green-700 mt-4" style={{ fontFamily: "'Playfair Display', serif" }}>
+            {sunflowerData.price}
+          </p>
           <button
             className="buy-now-btn mt-6"
             onClick={handlePurchase}
             style={{
               padding: '1rem 2rem',
-              background: 'linear-gradient(135deg, #ffeb3b, #ffc107)',
+              background: 'linear-gradient(135deg, #ffeb3b, #ffc107)', // AI-themed gradient
               color: 'white',
               border: 'none',
               borderRadius: '12px',
@@ -81,7 +84,9 @@ function SunflowerPage() {
         </div>
 
         <div className="flower-more-info mt-8">
-          <h2 className="text-3xl font-bold text-yellow-600">Why Choose Sunflowers?</h2>
+          <h2 className="text-3xl font-bold text-yellow-600" style={{ fontFamily: "'Playfair Display', serif", marginBottom: '1rem' }}>
+            Why Choose Sunflowers?
+          </h2>
           <p className="text-lg mt-4 text-gray-700">
             Sunflowers are a symbol of happiness and positivity. Their bright yellow petals and towering stems bring warmth and cheer to any space.
           </p>

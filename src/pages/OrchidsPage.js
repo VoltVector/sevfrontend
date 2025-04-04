@@ -38,30 +38,33 @@ function OrchidsPage() {
         className="flower-header"
         style={{
           backgroundImage: `url(${orchidData.image})`,
-          backgroundSize: 'contain', // Changed to 'contain' for uniform scaling
-          backgroundRepeat: 'no-repeat', // Prevent tiling
+          backgroundSize: 'cover',
+          backgroundRepeat: 'no-repeat',
           backgroundPosition: 'center',
-          height: '50vh', // Adjusted height for better proportions
+          height: '60vh',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          color: 'white',
-          textShadow: '2px 2px 6px rgba(0, 0, 0, 0.8)',
+          color: '#fff',
+          textShadow: '3px 3px 8px rgba(0, 0, 0, 0.7)',
         }}
       >
-        <h1 className="text-6xl font-extrabold">{orchidData.name}</h1>
       </header>
 
       {/* Product Details */}
       <main className="flower-main">
         <div className="product-details text-center">
-          <p className="text-lg mt-4 text-gray-700">{orchidData.description}</p>
-          <p className="text-3xl font-bold text-green-700 mt-4">{orchidData.price}</p>
+          <p className="text-lg mt-4 text-gray-700" style={{ lineHeight: '1.8', fontStyle: 'italic' }}>
+            {orchidData.description}
+          </p>
+          <p className="text-3xl font-bold text-green-700 mt-4" style={{ fontFamily: "'Playfair Display', serif" }}>
+            {orchidData.price}
+          </p>
           <button
             className="buy-now-btn mt-6"
             style={{
               padding: '1rem 2rem',
-              background: 'linear-gradient(135deg, #ff7eb3, #ff758c)',
+              background: 'linear-gradient(135deg, #ff7eb3, #ff758c)', // AI-themed gradient
               color: 'white',
               border: 'none',
               borderRadius: '12px',
@@ -84,7 +87,9 @@ function OrchidsPage() {
 
         {/* Additional Information */}
         <div className="flower-more-info mt-8">
-          <h2 className="text-3xl font-bold text-indigo-600">Why Choose Orchids?</h2>
+          <h2 className="text-3xl font-bold text-indigo-600" style={{ fontFamily: "'Playfair Display', serif", marginBottom: '1rem' }}>
+            Why Choose Orchids?
+          </h2>
           <p className="text-lg mt-4 text-gray-700">
             Orchids are a symbol of elegance and luxury. Their exotic beauty and intricate patterns make them a sophisticated choice for any occasion.
           </p>

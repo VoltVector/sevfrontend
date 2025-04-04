@@ -38,31 +38,34 @@ function MarigoldPage() {
         className="flower-header"
         style={{
           backgroundImage: `url(${marigoldData.image})`,
-          backgroundSize: 'contain',
+          backgroundSize: 'cover',
           backgroundRepeat: 'no-repeat',
           backgroundPosition: 'center',
-          height: '50vh',
+          height: '60vh',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          color: 'white',
-          textShadow: '2px 2px 6px rgba(0, 0, 0, 0.8)',
+          color: '#fff',
+          textShadow: '3px 3px 8px rgba(0, 0, 0, 0.7)',
         }}
       >
-        <h1 className="text-6xl font-extrabold">{marigoldData.name}</h1>
       </header>
 
       {/* Product Details */}
       <main className="flower-main">
         <div className="product-details text-center">
-          <p className="text-lg mt-4 text-gray-700">{marigoldData.description}</p>
-          <p className="text-3xl font-bold text-green-700 mt-4">{marigoldData.price}</p>
+          <p className="text-lg mt-4 text-gray-700" style={{ lineHeight: '1.8', fontStyle: 'italic' }}>
+            {marigoldData.description}
+          </p>
+          <p className="text-3xl font-bold text-green-700 mt-4" style={{ fontFamily: "'Playfair Display', serif" }}>
+            {marigoldData.price}
+          </p>
           <button
             className="buy-now-btn mt-6"
             onClick={handlePurchase}
             style={{
               padding: '1rem 2rem',
-              background: 'linear-gradient(135deg, #ffcc00, #ff9900)',
+              background: 'linear-gradient(135deg, #ffcc00, #ff9900)', // AI-themed gradient
               color: 'white',
               border: 'none',
               borderRadius: '12px',
@@ -84,7 +87,9 @@ function MarigoldPage() {
 
         {/* Additional Information */}
         <div className="flower-more-info mt-8">
-          <h2 className="text-3xl font-bold text-orange-600">Why Choose Marigolds?</h2>
+          <h2 className="text-3xl font-bold text-orange-600" style={{ fontFamily: "'Playfair Display', serif", marginBottom: '1rem' }}>
+            Why Choose Marigolds?
+          </h2>
           <p className="text-lg mt-4 text-gray-700">
             Marigolds are known for their vibrant orange and yellow hues, symbolizing warmth and positivity. They are perfect for brightening up any garden.
           </p>

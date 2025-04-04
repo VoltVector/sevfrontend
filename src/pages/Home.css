@@ -1,21 +1,74 @@
 .calibration-controls {
   display: flex;
   justify-content: center;
-  gap: 20px;
-  margin-top: 20px;
+  gap: 20px; /* Add spacing between buttons */
+  margin-top: 40px; /* Add margin to separate from plant cards */
 }
 
 .calibration-button {
-  padding: 10px 20px;
-  font-size: 16px;
-  background-color: #4caf50;
+  padding: 14px 28px; /* Adjust padding for better appearance */
+  font-size: 18px; /* Slightly larger font size */
+  background: linear-gradient(135deg, #6a11cb, #2575fc); /* AI-themed gradient */
   color: white;
   border: none;
-  border-radius: 5px;
+  border-radius: 10px; /* Rounded corners */
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  font-weight: bold; /* Bold text for emphasis */
+  transition: background 0.3s ease, transform 0.2s ease;
 }
 
 .calibration-button:hover {
-  background-color: #45a049;
+    background: linear-gradient(135deg, #2575fc, #6a11cb); /* Reverse gradient on hover */
+    transform: scale(1.1); /* Slight hover effect */
+  }
+
+.flower-page {
+  font-family: 'Roboto', sans-serif;
+  color: #333;
+}
+
+.flower-header {
+  background-size: cover;
+  background-position: center;
+  height: 60vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.7);
+}
+
+.flower-main {
+  padding: 2rem;
+}
+
+.product-details {
+  background: linear-gradient(135deg, #f3f4f6, #e5e7eb);
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.buy-now-btn {
+  padding: 1rem 2rem;
+  background: linear-gradient(135deg, #6ee7b7, #3b82f6);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1.2rem;
+  font-weight: bold;
+  transition: transform 0.2s ease, background 0.3s ease;
+}
+
+.buy-now-btn:hover {
+  transform: scale(1.1);
+  background: linear-gradient(135deg, #3b82f6, #6ee7b7);
+}
+
+.flower-more-info {
+  margin-top: 2rem;
+  padding: 1.5rem;
+  background: #f9fafb;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }

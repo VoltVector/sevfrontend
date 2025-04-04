@@ -12,7 +12,7 @@ function Footer() {
         padding: '1rem 0',
       }}
     >
-      <p>&copy; 2025 Echipa Mizar. All rights reserved.</p>
+      <p> 2025 - Echipa Mizar - Web Design </p>
     </footer>
   );
 }
