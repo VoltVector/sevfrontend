@@ -7,6 +7,7 @@ import './Home.css';
 
 const Home = ({ startCalibrationProcess, stopCalibration, calibrating, completeCalibration, recommendations }) => {
   console.log('Recommendations:', recommendations.length);
+  console.log('Recommendations:', recommendations); // Log the actual recommendations array
   return (
     <div className="home-container">
       <main className="App-main">

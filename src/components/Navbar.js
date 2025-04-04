@@ -26,7 +26,7 @@ function Navbar({ toggleVoiceCommands, voiceCommandsEnabled, toggleGazing, gazin
             textShadow: '1px 1px 2px rgba(0, 0, 0, 0.5)',
           }}
         >
-          Teodora's Florist
+          Teodora's Flowershop
         </h1>
         <div style={{ fontSize: '1.2rem', fontWeight: 'bold' }}>
           Balance: ${balance} {/* Display the updated balance */}

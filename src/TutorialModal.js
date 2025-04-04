@@ -70,7 +70,7 @@ function TutorialModal({ onClose, onTaskComplete, tutorialProgress }) {
 
   return (
     <div className="tutorial-modal">
-      <h2>Welcome to Teodora's Florist</h2>
+      <h2>Welcome to Teodora's Flowershop</h2>
       <p>Complete the following tasks to learn how to use voice commands:</p>
       <p className="text-lg mt-4">{tasks[tutorialProgress]}</p>
       <div

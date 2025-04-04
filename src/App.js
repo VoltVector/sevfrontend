@@ -53,7 +53,11 @@ const [purchaseHistory, setPurchaseHistory] = useState(() => {
     orchids: false,
   });
   const [calibrating, setCalibrating] = useState(false);
-  const [purchaseCount, setPurchaseCount] = useState(0);
+  const [purchaseCount, setPurchaseCount] = useState(() => {
+    // Initialize purchaseCount from localStorage or default to 0
+    const savedCount = localStorage.getItem('purchaseCount');
+    return savedCount ? parseInt(savedCount, 10) : 0;
+  });
 
   const handleBehaviorDetected = (behaviorData) => {
     console.log('Behavior detected:', behaviorData);
@@ -98,8 +102,13 @@ const [purchaseHistory, setPurchaseHistory] = useState(() => {
   // Generate recommendations
   const generateRecommendations = (purchasedFlower) => {
     const purchasedAttributes = flowerData[purchasedFlower];
+    if (!purchasedAttributes) {
+      console.error(`No data found for purchased flower: ${purchasedFlower}`);
+      return;
+    }
+  
     const newRecommendations = Object.entries(flowerData)
-      .filter(([flower]) => flower !== purchasedFlower)
+      .filter(([flower]) => flower.toLowerCase() !== purchasedFlower.toLowerCase()) // Normalize case
       .map(([flower, attributes]) => ({
         flower,
         similarity: calculateSimilarity(purchasedAttributes, attributes),
@@ -249,40 +258,53 @@ const [purchaseHistory, setPurchaseHistory] = useState(() => {
     }
   }, [showGreeting]);
 
+
   const buyFlower = (flowerName, price, plantKey) => {
     if (purchasedPlants[plantKey]) {
       toast.warn(`You can't buy ${flowerName} multiple times.`);
       return;
     }
-  
+
     if (balance >= price) {
       const newBalance = balance - price;
       setBalance(newBalance); // Update balance state
       localStorage.setItem('balance', newBalance);
-  
+
       const purchaseHistory = JSON.parse(localStorage.getItem('purchaseHistory') || '[]');
       const newPurchase = { flowerName, price, date: new Date().toISOString() };
       const updatedHistory = [...purchaseHistory, newPurchase];
       localStorage.setItem('purchaseHistory', JSON.stringify(updatedHistory));
-  
+
       setPurchasedPlants((prev) => ({ ...prev, [plantKey]: true })); // Mark as purchased
-  
+
+      // Increment the purchase count state
       setPurchaseCount((prevCount) => {
         const newCount = prevCount + 1;
-  
-        // Show recommendations after every 3 purchases
+
+        // Save the updated count to localStorage
+        localStorage.setItem('purchaseCount', newCount);
+
+        // Trigger recommendations after every 3 purchases
         if (newCount % 3 === 0) {
           generateRecommendations(flowerName); // Ensure this is called with the correct flower name
         }
-  
+
         return newCount;
       });
-  
+
       toast.success(`Successfully purchased ${flowerName}!`);
     } else {
       toast.error('Insufficient balance!');
     }
   };
+
+  useEffect(() => {
+    // Synchronize purchaseCount with localStorage on mount
+    const savedCount = localStorage.getItem('purchaseCount');
+    if (savedCount) {
+      setPurchaseCount(parseInt(savedCount, 10));
+    }
+  }, []);
 
   useEffect(() => {
     localStorage.setItem('balance', balance); // Synchronize balance with localStorage
@@ -460,17 +482,19 @@ const [purchaseHistory, setPurchaseHistory] = useState(() => {
   }, [tutorialProgress, voiceCommandsEnabled, purchasedPlants]);
 
   console.log('tutorialProgress:', tutorialProgress);
+  console.log('purchaseCounter:', purchaseCount);
 
   return (
     <Router>
       <div className="App">
-        <Navbar
+      <Navbar
           toggleVoiceCommands={toggleVoiceCommands}
           voiceCommandsEnabled={voiceCommandsEnabled}
           toggleGazing={toggleGazing}
           gazingEnabled={gazingEnabled}
           tutorialProgress={tutorialProgress}
           balance={balance} // Pass balance to Navbar
+          purchaseCount={purchaseCount} // Pass purchaseCount as a prop
         />
 
         <ToastContainer position="top-right" autoClose={5000} />
@@ -511,11 +535,12 @@ const [purchaseHistory, setPurchaseHistory] = useState(() => {
         <Routes>
           <Route path="/" element={
             <Home
-              startCalibrationProcess={startCalibrationProcess}
-              stopCalibration={stopCalibration}
-              calibrating={calibrating}
-              completeCalibration={completeCalibration}
-              recommendations={recommendations}
+            startCalibrationProcess={startCalibrationProcess}
+            stopCalibration={stopCalibration}
+            calibrating={calibrating}
+            completeCalibration={completeCalibration}
+            recommendations={recommendations}
+            purchaseCount={purchaseCount} // Pass purchaseCount to Home
             />
           } />
           <Route path="/roses" element={<RosesPage />} />
