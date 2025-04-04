@@ -405,15 +405,6 @@ const [purchaseHistory, setPurchaseHistory] = useState(() => {
 
         <ToastContainer position="top-right" autoClose={5000} />
 
-        
-        <div className="calibration-controls">
-          <button onClick={startCalibrationProcess}>Start Calibration</button>
-          <button onClick={stopCalibration}>Stop Calibration</button>
-        </div>
-
-        {calibrating && <CalibrationOverlay onComplete={completeCalibration} />}
-        
-
         <AnimatePresence>
           {showGreeting && (
             <div className="greeting-modal">
@@ -436,7 +427,14 @@ const [purchaseHistory, setPurchaseHistory] = useState(() => {
         </AnimatePresence>
 
         <Routes>
-          <Route path="/" element={<Home />} />
+          <Route path="/" element={
+            <Home
+              startCalibrationProcess={startCalibrationProcess}
+              stopCalibration={stopCalibration}
+              calibrating={calibrating}
+              completeCalibration={completeCalibration}
+            />
+          } />
           <Route path="/roses" element={<RosesPage />} />
           <Route path="/tulips" element={<TulipsPage />} />
           <Route path="/orchids" element={<OrchidsPage />} />

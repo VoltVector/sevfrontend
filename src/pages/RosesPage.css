@@ -1,0 +1,92 @@
+body {
+  background: linear-gradient(135deg, #0f2027, #203a43, #2c5364); /* AI-inspired gradient */
+  color: #e0e0e0;
+  font-family: 'Roboto', sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+h1, h2, h3 {
+  color: #ff79c6;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6); /* Add subtle shadow for depth */
+}
+
+button {
+  background-color: #6272a4;
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: bold;
+  transition: transform 0.2s ease, background-color 0.3s ease;
+}
+
+button:hover {
+  background-color: #44475a;
+  transform: scale(1.1); /* Slightly larger hover effect */
+}
+
+a {
+  color: #8be9fd;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+.card {
+  background-color: #282a36;
+  border: 1px solid #44475a;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3); /* Enhanced shadow for depth */
+}
+
+.flower-header {
+  position: relative;
+  overflow: hidden;
+}
+
+.flower-header::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 5px; /* Remove blue bar by overriding */
+  background: none; /* Ensure no background is applied */
+}
+
+.flower-main {
+  padding: 20px;
+}
+
+.product-details {
+  text-align: center;
+  margin-top: 20px;
+}
+
+.product-details p {
+  line-height: 1.6;
+}
+
+.buy-now-btn {
+  background: linear-gradient(135deg, #ff7eb3, #ff758c); /* AI-themed gradient */
+  color: white;
+  border: none;
+  border-radius: 12px;
+  padding: 12px 24px;
+  font-size: 18px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.2s ease;
+}
+
+.buy-now-btn:hover {
+  background: linear-gradient(135deg, #ff758c, #ff7eb3); /* Reverse gradient on hover */
+  transform: scale(1.1);
+}
