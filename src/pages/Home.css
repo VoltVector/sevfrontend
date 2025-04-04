@@ -72,3 +72,31 @@
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
+
+.recommendations-section {
+  margin-top: 2rem;
+  padding: 1rem;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+}
+
+.recommendations-grid {
+  display: grid;
+  gap: 1rem;
+}
+
+.recommendation-card {
+  background: white;
+  border: 1px solid #ddd;
+  padding: 1rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.recommendation-card h3 {
+  margin-bottom: 0.5rem;
+}
+
+.recommendation-card p {
+  color: #555;
+}

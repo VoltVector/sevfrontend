@@ -3,8 +3,9 @@ import { Link } from 'react-router-dom';
 import Tooltip from '../components/Tooltip';
 import { flowers } from '../data/flowers';
 import CalibrationOverlay from '../components/CalibrationOverlay';
+import './Home.css';
 
-const Home = ({ startCalibrationProcess, stopCalibration, calibrating, completeCalibration }) => {
+const Home = ({ startCalibrationProcess, stopCalibration, calibrating, completeCalibration, recommendations }) => {
   return (
     <div className="home-container">
       <main className="App-main">
@@ -55,6 +56,21 @@ const Home = ({ startCalibrationProcess, stopCalibration, calibrating, completeC
             <Tooltip text={`Click to learn more about ${flower.name}!`} />
           </div>
         ))}
+
+        {/* Recommendations Section */}
+        {recommendations.length > 0 && (
+          <div className="recommendations-section mt-8">
+            <h2 className="text-2xl font-bold mb-4">Recommended for You</h2>
+            <div className="recommendations-grid grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {recommendations.map((rec) => (
+                <div key={rec.flower} className="recommendation-card p-4 border rounded shadow">
+                  <h3 className="text-lg font-semibold">{rec.flower}</h3>
+                  <p className="text-gray-600">Similarity: {(rec.similarity * 100).toFixed(2)}%</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
       </main>
       <div className="calibration-controls">
         <button onClick={startCalibrationProcess} className="calibration-button">Start Calibration</button>

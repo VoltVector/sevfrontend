@@ -19,6 +19,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import useGazeTracking from './hooks/useGazeTracking';
 import { startCalibration, stopCalibration } from './WebGazer/webGazerUtils';
 import CalibrationOverlay from './components/CalibrationOverlay';
+import usePredictiveUX from './hooks/usePredictiveUX';
 
 
 function App() {
@@ -34,7 +35,10 @@ function App() {
   const [voiceCommandsEnabled, setVoiceCommandsEnabled] = useState(true);
   const [gazeTarget, setGazeTarget] = useState(null);
   const gazeTimer = useRef(null);
-  const [gazingEnabled, setGazingEnabled] = useState(true);
+  const [gazingEnabled, setGazingEnabled] = useState(() => {
+    const savedGazing = localStorage.getItem('gazingEnabled');
+    return savedGazing ? JSON.parse(savedGazing) : true; // Default to true if not set
+  });
 const [purchaseHistory, setPurchaseHistory] = useState(() => {
     const savedHistory = localStorage.getItem('purchaseHistory');
     return savedHistory ? JSON.parse(savedHistory) : [];
@@ -49,6 +53,11 @@ const [purchaseHistory, setPurchaseHistory] = useState(() => {
     orchids: false,
   });
   const [calibrating, setCalibrating] = useState(false);
+  const [purchaseCount, setPurchaseCount] = useState(0);
+
+  const handleBehaviorDetected = (behaviorData) => {
+    console.log('Behavior detected:', behaviorData);
+  };
 
   const startCalibrationProcess = () => {
     setCalibrating(true);
@@ -61,6 +70,53 @@ const [purchaseHistory, setPurchaseHistory] = useState(() => {
     toast.success('Calibration completed successfully!');
   };
 
+  const userPreferences = usePredictiveUX(() => {});
+  const [recommendations, setRecommendations] = useState([]);
+
+
+  // Flower dataset with attributes
+  const flowerData = {
+    Roses: { price: 25, category: 'romantic', popularity: 5 },
+    Tulips: { price: 20, category: 'spring', popularity: 4 },
+    Orchids: { price: 30, category: 'exotic', popularity: 5 },
+    Sunflowers: { price: 50, category: 'summer', popularity: 3 },
+    Marigold: { price: 18, category: 'autumn', popularity: 2 },
+  };
+
+  // Calculate similarity between flowers
+  const calculateSimilarity = (flower1, flower2) => {
+    const attributes1 = Object.values(flower1);
+    const attributes2 = Object.values(flower2);
+
+    const dotProduct = attributes1.reduce((sum, attr, index) => sum + attr * attributes2[index], 0);
+    const magnitude1 = Math.sqrt(attributes1.reduce((sum, attr) => sum + attr ** 2, 0));
+    const magnitude2 = Math.sqrt(attributes2.reduce((sum, attr) => sum + attr ** 2, 0));
+
+    return dotProduct / (magnitude1 * magnitude2);
+  };
+
+  // Generate recommendations
+  const generateRecommendations = (purchasedFlower) => {
+    const purchasedAttributes = flowerData[purchasedFlower];
+    const newRecommendations = Object.entries(flowerData)
+      .filter(([flower]) => flower !== purchasedFlower)
+      .map(([flower, attributes]) => ({
+        flower,
+        similarity: calculateSimilarity(purchasedAttributes, attributes),
+      }))
+      .sort((a, b) => b.similarity - a.similarity)
+      .slice(0, 2); // Top 2 recommendations
+  
+    setRecommendations(newRecommendations); // Save recommendations to state
+  
+    if (newRecommendations.length > 0) {
+      toast.info(
+        `Based on your purchase of ${purchasedFlower}, you might also like: ${newRecommendations
+          .map((rec) => rec.flower)
+          .join(', ')}.`
+      );
+    }
+  };
 
   // Synchronize tutorialProgress with localStorage
   useEffect(() => {
@@ -112,6 +168,7 @@ const [purchaseHistory, setPurchaseHistory] = useState(() => {
 
   const declineTutorial = () => {
     setShowGreeting(false);
+    localStorage.setItem('tutorialCompleted', 'true'); // Mark tutorial as completed
     toast.info('Voice Command Tutorial skipped.');
     askToKeepVoiceCommands();
   };
@@ -159,15 +216,16 @@ const [purchaseHistory, setPurchaseHistory] = useState(() => {
   };
 
   const toggleGazing = () => {
-    setGazingEnabled((prev) => !prev);
+    setGazingEnabled((prev) => {
+      const newValue = !prev;
+      localStorage.setItem('gazingEnabled', JSON.stringify(newValue)); // Save to localStorage
+      return newValue;
+    });
     toast.info(gazingEnabled ? 'Gazing disabled. Camera input stopped.' : 'Gazing enabled.');
   };
 
   useEffect(() => {
-    if (!gazingEnabled) {
-      setGazeTarget(null);
-      clearTimeout(gazeTimer.current);
-    }
+    localStorage.setItem('gazingEnabled', JSON.stringify(gazingEnabled)); // Synchronize with localStorage
   }, [gazingEnabled]);
 
   useEffect(() => {
@@ -192,22 +250,33 @@ const [purchaseHistory, setPurchaseHistory] = useState(() => {
 
   const buyFlower = (flowerName, price, plantKey) => {
     if (purchasedPlants[plantKey]) {
-      // Warn the user if the item has already been purchased
       toast.warn(`You can't buy ${flowerName} multiple times.`);
       return;
     }
-
+  
     if (balance >= price) {
       const newBalance = balance - price;
       setBalance(newBalance); // Update balance state
       localStorage.setItem('balance', newBalance);
-
+  
       const purchaseHistory = JSON.parse(localStorage.getItem('purchaseHistory') || '[]');
       const newPurchase = { flowerName, price, date: new Date().toISOString() };
       const updatedHistory = [...purchaseHistory, newPurchase];
       localStorage.setItem('purchaseHistory', JSON.stringify(updatedHistory));
-
+  
       setPurchasedPlants((prev) => ({ ...prev, [plantKey]: true })); // Mark as purchased
+  
+      setPurchaseCount((prevCount) => {
+        const newCount = prevCount + 1;
+  
+        // Show recommendations after every 3 purchases
+        if (newCount % 3 === 0) {
+          generateRecommendations(flowerName); // Ensure this is called with the correct flower name
+        }
+  
+        return newCount;
+      });
+  
       toast.success(`Successfully purchased ${flowerName}!`);
     } else {
       toast.error('Insufficient balance!');
@@ -405,6 +474,18 @@ const [purchaseHistory, setPurchaseHistory] = useState(() => {
 
         <ToastContainer position="top-right" autoClose={5000} />
 
+        {userPreferences.prefersScrolling && (
+          <div className="preference-banner">
+            <p>We noticed you prefer scrolling. Here's a scroll-friendly layout!</p>
+          </div>
+        )}
+
+        {userPreferences.prefersClicking && (
+          <div className="preference-banner">
+            <p>We noticed you prefer clicking. Here's a click-friendly layout!</p>
+          </div>
+        )}
+
         <AnimatePresence>
           {showGreeting && (
             <div className="greeting-modal">
@@ -433,6 +514,7 @@ const [purchaseHistory, setPurchaseHistory] = useState(() => {
               stopCalibration={stopCalibration}
               calibrating={calibrating}
               completeCalibration={completeCalibration}
+              recommendations={recommendations}
             />
           } />
           <Route path="/roses" element={<RosesPage />} />
